@@ -2,6 +2,7 @@ package edu.hsog.db;
 
 import edu.hsog.db.DTOs.GadgetDTO;
 
+import javax.swing.*;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -480,7 +481,7 @@ public class DBQueries {
         }
     }
 
-    public static void insertGadget(String url, String email, String keywords, String description, Blob image){
+    public static void insertGadget(String url, String email, String keywords, String description, Icon icon){
         con = Globals.getPoolConnection();
 
         try {
@@ -492,10 +493,10 @@ public class DBQueries {
             insertGadgetStm.setString(3, keywords);
             insertGadgetStm.setString(4, description);
 
-            if (image != null)
-                insertGadgetStm.setBlob(5, image);
-            else
-                insertGadgetStm.setNull(5, java.sql.Types.BLOB);
+            Blob myImage = Converter.icon2Blob(icon, con);
+
+            insertGadgetStm.setBlob(5, myImage);
+
 
 
             insertGadgetStm.executeUpdate();

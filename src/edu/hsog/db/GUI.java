@@ -66,7 +66,7 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 Globals.initConnectionPool();
                 jConnectionLabel.setText("verbunden");
-                setupUI();
+//                setupUI();
                 //TODO kto bon crash 1 test
             }
         });
@@ -330,13 +330,12 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
 
                 Icon icon = imageLabel.getIcon();
-                if (icon != null) {
-                    Blob imageBlob = Converter.icon2Blob(icon, Globals.getPoolConnection());
 
-                    if (Globals.getLoggedUser() != null) {
-                        DBQueries.insertGadget(gadgetURL.getText(), Globals.getLoggedUser(), keywordLabel.getText(), descriptionTextArea.getText(), imageBlob);
-                    }
+                if (Globals.getLoggedUser() != null) {
+                    DBQueries.insertGadget(gadgetURL.getText(), Globals.getLoggedUser(), keywordLabel.getText(), descriptionTextArea.getText(), icon);
+                    setupUI();
                 }
+
             }
         });
     }
@@ -413,15 +412,14 @@ public class GUI {
 }
 
 //TODO:
-// Insert New Gadget
 // The owner should be able to edit the keywords, description and the image anytime by clicking SaveItem
 // Sort the emails in right order
+// Close the rs
 
 /*Problems
     TODO:
-     onLogout, close con or whatever so you the tests can pass, while clicking login 590845 times
      When clicking 4 times on login
-     setupUI trigger shej mo prejshi nej test
+     setupUI
      shej a duet ta bosh order by url ke emailet
 
 
