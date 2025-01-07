@@ -141,6 +141,7 @@ public class GUI {
         previousButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(DBQueries.getRs() != null) {
                 if (!DBQueries.isFirst()) {
 
                     GadgetDTO gadgets = DBQueries.previousGadget();
@@ -153,7 +154,7 @@ public class GUI {
                     loadComments(gadgets.getUrl());
                     loadRating(gadgets.getUrl());
 
-                    if(gadgets.getImage() != null){
+                    if (gadgets.getImage() != null) {
                         ByteArrayInputStream bis = new ByteArrayInputStream(gadgets.getImage());
                         Icon icon = null;
                         try {
@@ -163,17 +164,18 @@ public class GUI {
                         }
                         imageLabel.setIcon(icon);
                         imageLabel.setText("");
-                    }else {
+                    } else {
                         imageLabel.setIcon(null);
                         imageLabel.setText("No Image Available");
                     }
-
+                }
                 }
             }
         });
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(DBQueries.getRs() != null) {
                 if (!DBQueries.isLast()) {
 
                     GadgetDTO gadgets = DBQueries.nextGadget();
@@ -184,6 +186,68 @@ public class GUI {
                     descriptionTextArea.setText(gadgets.getDescription());
                     gadgetEmail = gadgets.getEmail();
 
+                    loadRating(gadgets.getUrl());
+
+                    if (gadgets.getImage() != null) {
+                        ByteArrayInputStream bis = new ByteArrayInputStream(gadgets.getImage());
+                        Icon icon = null;
+                        try {
+                            icon = new ImageIcon(ImageIO.read(bis));
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        imageLabel.setIcon(icon);
+                        imageLabel.setText("");
+                    } else {
+                        imageLabel.setIcon(null);
+                        imageLabel.setText("No Image Available");
+                    }
+                }
+                }
+            }
+        });
+        firstButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(DBQueries.getRs() != null) {
+                    GadgetDTO gadgets = DBQueries.moveFirst();
+
+                    gadgetURL.setText(gadgets.getUrl());
+                    keywordLabel.setText(gadgets.getKeywords());
+                    loadComments(gadgets.getUrl());
+                    descriptionTextArea.setText(gadgets.getDescription());
+                    gadgetEmail = gadgets.getEmail();
+                    loadRating(gadgets.getUrl());
+
+                    if (gadgets.getImage() != null) {
+                        ByteArrayInputStream bis = new ByteArrayInputStream(gadgets.getImage());
+                        Icon icon = null;
+                        try {
+                            icon = new ImageIcon(ImageIO.read(bis));
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+                        imageLabel.setIcon(icon);
+                        imageLabel.setText("");
+                    } else {
+                        imageLabel.setIcon(null);
+                        imageLabel.setText("No Image Available");
+                    }
+
+                }
+            }
+        });
+        lastButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(DBQueries.getRs() != null) {
+                    GadgetDTO gadgets = DBQueries.moveLast();
+
+                    gadgetURL.setText(gadgets.getUrl());
+                    keywordLabel.setText(gadgets.getKeywords());
+                    loadComments(gadgets.getUrl());
+                    descriptionTextArea.setText(gadgets.getDescription());
+                    gadgetEmail = gadgets.getEmail();
                     loadRating(gadgets.getUrl());
 
                     if(gadgets.getImage() != null){
@@ -200,66 +264,6 @@ public class GUI {
                         imageLabel.setIcon(null);
                         imageLabel.setText("No Image Available");
                     }
-
-                }
-            }
-        });
-        firstButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                GadgetDTO gadgets = DBQueries.moveFirst();
-
-                gadgetURL.setText(gadgets.getUrl());
-                keywordLabel.setText(gadgets.getKeywords());
-                loadComments(gadgets.getUrl());
-                descriptionTextArea.setText(gadgets.getDescription());
-                gadgetEmail = gadgets.getEmail();
-                loadRating(gadgets.getUrl());
-
-                if(gadgets.getImage() != null){
-                    ByteArrayInputStream bis = new ByteArrayInputStream(gadgets.getImage());
-                    Icon icon = null;
-                    try {
-                        icon = new ImageIcon(ImageIO.read(bis));
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    imageLabel.setIcon(icon);
-                    imageLabel.setText("");
-                }else {
-                    imageLabel.setIcon(null);
-                    imageLabel.setText("No Image Available");
-                }
-
-
-            }
-        });
-        lastButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                GadgetDTO gadgets = DBQueries.moveLast();
-
-                gadgetURL.setText(gadgets.getUrl());
-                keywordLabel.setText(gadgets.getKeywords());
-                loadComments(gadgets.getUrl());
-                descriptionTextArea.setText(gadgets.getDescription());
-                gadgetEmail = gadgets.getEmail();
-                loadRating(gadgets.getUrl());
-
-                if(gadgets.getImage() != null){
-                    ByteArrayInputStream bis = new ByteArrayInputStream(gadgets.getImage());
-                    Icon icon = null;
-                    try {
-                        icon = new ImageIcon(ImageIO.read(bis));
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                    imageLabel.setIcon(icon);
-                    imageLabel.setText("");
-                }else {
-                    imageLabel.setIcon(null);
-                    imageLabel.setText("No Image Available");
                 }
 
             }
@@ -347,6 +351,8 @@ public class GUI {
         if (userExists) {
             loggedUserEmail.setText(userLabel.getText());
             Globals.setLoggedUser(userLabel.getText());
+//            trying
+            DBQueries.closeRs();
             jConnectionLabel.setText("logged in");
         } else {
             Globals.setLoggedUser(null);
@@ -354,10 +360,15 @@ public class GUI {
 
         if (Globals.getLoggedUser() != null){
             loggedUserEmail.setText(Globals.getLoggedUser());
+            //trying
+            DBQueries.closeRs();
             setupUI();
+            //TODO: shef mo bojn ktu crash
         }
-        else
+        else {
             jConnectionLabel.setText("not logged in");
+            DBQueries.closeRs();
+        }
 
 
     }
@@ -406,15 +417,17 @@ public class GUI {
         }
     }
 
+
     public JPanel getMasterPanel() {
         return masterPanel;
     }
+
 }
 
 //TODO:
 // The owner should be able to edit the keywords, description and the image anytime by clicking SaveItem
-// Sort the emails in right order
-// Close the rs
+// Sort the emails in right order (The comments should be sorted alphabetically in ascending order.)
+// After successful login, next unsuccesful login or register close rs
 
 /*Problems
     TODO:

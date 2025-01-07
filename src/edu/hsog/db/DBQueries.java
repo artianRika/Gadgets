@@ -193,17 +193,18 @@ public class DBQueries {
 
     public static GadgetDTO moveFirst() {
         try {
-            rs.first();
+                rs.first();
 
 
-            String url = rs.getString("URL");
-            String email = rs.getString("EMAIL");
-            String keywords = rs.getString("KEYWORDS");
-            String description = rs.getString("DESCRIPTION");
-            byte[] image = rs.getBytes("COVER");
+                String url = rs.getString("URL");
+                String email = rs.getString("EMAIL");
+                String keywords = rs.getString("KEYWORDS");
+                String description = rs.getString("DESCRIPTION");
+                byte[] image = rs.getBytes("COVER");
 
 
-            return new GadgetDTO(url, email, keywords, description, image);
+                return new GadgetDTO(url, email, keywords, description, image);
+
         } catch (SQLException e) {
             throw new RuntimeException("Error moving to first record: " + e.getMessage());
         }
@@ -286,7 +287,7 @@ public class DBQueries {
             con = Globals.getPoolConnection();
 
 
-            String q = "SELECT KOMMENTAR FROM BEWERTUNG WHERE URL = ? ORDER BY EMAIL";
+            String q = "SELECT KOMMENTAR FROM BEWERTUNG WHERE URL = ? ORDER BY KOMMENTAR ASC";
             commentsStm = con.prepareStatement(q, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
             commentsStm.setString(1, url);
 
@@ -512,6 +513,20 @@ public class DBQueries {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static void closeRs(){
+        try {
+            if(rs != null) rs.close();
+            if(stm != null) stm.close();
+            if(con != null) con.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ResultSet getRs(){
+        return rs;
     }
 }
 
