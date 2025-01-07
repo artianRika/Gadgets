@@ -36,12 +36,17 @@ public class DBQueries {
     private static PreparedStatement checkRatingStm;
     private static ResultSet checkRatingRs;
 
+    private static PreparedStatement checkGadgetStm;
+    private static ResultSet checkGadgetRs;
+
     private static ResultSet mostRatedGadgetRs;
     private static Statement mostRatedGadgetStm;
 
     private static PreparedStatement deletionStatement;
 
     private static PreparedStatement insertGadgetStm;
+
+    private static PreparedStatement editGadgetStm;
 
 
     static int count(){
@@ -508,6 +513,70 @@ public class DBQueries {
         } finally {
             try {
                 if(insertGadgetStm != null) insertGadgetStm.close();
+                if(con != null) con.close();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static boolean checkGadget(String email, String url){
+        try {
+            con = Globals.getPoolConnection();
+
+            checkGadgetStm = con.prepareStatement("SELECT * FROM GADGETS WHERE EMAIL=? AND URL=?");
+            checkGadgetStm.setString(1, email);
+            checkGadgetStm.setString(2, url);
+
+            checkGadgetRs = checkGadgetStm.executeQuery();
+            if(checkGadgetRs.next()){
+                return true;
+            }else {
+                return false;
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Error while checking if the gadget exists " + e.getMessage());
+        }
+        finally {
+            try {
+                if (checkGadgetRs != null) checkGadgetRs.close();
+                if (checkGadgetStm != null) checkGadgetStm.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error closing resources: " + e.getMessage());
+            }
+        }
+    }
+
+    public static void editGadget(String url, String email, String keywords, String description, Icon icon){
+        con = Globals.getPoolConnection();
+
+        try {
+
+            String q = "UPDATE GADGETS SET KEYWORDS=?, DESCRIPTION=?, COVER=? WHERE URL=? and EMAIL=?";
+            editGadgetStm = con.prepareStatement(q);
+
+            editGadgetStm.setString(1, keywords);
+            editGadgetStm.setString(2, description);
+            editGadgetStm.setString(4, url);
+            editGadgetStm.setString(5, email);
+
+            Blob myImage = Converter.icon2Blob(icon, con);
+
+            editGadgetStm.setBlob(3, myImage);
+
+
+
+            editGadgetStm.executeUpdate();
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if(editGadgetStm != null) editGadgetStm.close();
                 if(con != null) con.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);

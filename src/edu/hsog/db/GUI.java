@@ -66,8 +66,7 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 Globals.initConnectionPool();
                 jConnectionLabel.setText("verbunden");
-//                setupUI();
-                //TODO kto bon crash 1 test
+                setupUI();
             }
         });
         countJBtn.addActionListener(new ActionListener() {
@@ -275,7 +274,6 @@ public class GUI {
                     if(DBQueries.deleteGadget(gadgetURL.getText()) > 0) {
                         System.out.println("mrena");
                         setupUI();
-                        //TODO: testit i bon problem
                     }
                 }
             }
@@ -336,7 +334,12 @@ public class GUI {
                 Icon icon = imageLabel.getIcon();
 
                 if (Globals.getLoggedUser() != null) {
-                    DBQueries.insertGadget(gadgetURL.getText(), Globals.getLoggedUser(), keywordLabel.getText(), descriptionTextArea.getText(), icon);
+                    if(!DBQueries.checkGadget(Globals.getLoggedUser(), gadgetURL.getText())){
+                        DBQueries.insertGadget(gadgetURL.getText(), Globals.getLoggedUser(), keywordLabel.getText(), descriptionTextArea.getText(), icon);
+                        setupUI();
+                    }else{
+                        DBQueries.editGadget(gadgetURL.getText(), Globals.getLoggedUser(), keywordLabel.getText(), descriptionTextArea.getText(), icon);
+                    }
                     setupUI();
                 }
 
@@ -363,7 +366,6 @@ public class GUI {
             //trying
             DBQueries.closeRs();
             setupUI();
-            //TODO: shef mo bojn ktu crash
         }
         else {
             jConnectionLabel.setText("not logged in");
@@ -424,16 +426,3 @@ public class GUI {
 
 }
 
-//TODO:
-// The owner should be able to edit the keywords, description and the image anytime by clicking SaveItem
-// Sort the emails in right order (The comments should be sorted alphabetically in ascending order.)
-// After successful login, next unsuccesful login or register close rs
-
-/*Problems
-    TODO:
-     When clicking 4 times on login
-     setupUI
-     shej a duet ta bosh order by url ke emailet
-
-
- */

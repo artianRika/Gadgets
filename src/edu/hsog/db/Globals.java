@@ -29,7 +29,7 @@ public class Globals {
             conPool.setUrl(url);
             conPool.setUsername(username);
             conPool.setPassword(passwd);
-            conPool.setMaxTotal(20);
+            conPool.setMaxTotal(40);
             conPool.setInitialSize(10);
         }
     }
